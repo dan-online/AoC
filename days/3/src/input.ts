@@ -299,6 +299,13 @@ TTLChzhDnjQLTDhTQJrzSbbJHsGrGrGFGb
 BfvvpflfWVlVsFFvJHcFJFrJrt
 ZwMBwwZPWMMpffflqlZMRnRNQLCNhPhDDNssnRQD`;
 
+const guideText = `vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw`;
+
 class Item {
   public item: string;
 
@@ -326,13 +333,6 @@ class Bag {
     return this.items.slice(this.items.length / 2);
   }
 }
-
-const guideText = `vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw`;
 
 export function getBags(): Bag[] {
   return text.split('\n').map((x) => new Bag(x.split('').map((y) => new Item(y))));

@@ -4,10 +4,10 @@ const bags = getBags();
 let sum = 0;
 
 for (const bag of bags) {
-  for (const itemLeft of bag[0]) {
+  for (const itemLeft of bag.left) {
     let found = false;
 
-    for (const itemRight of bag[1]) {
+    for (const itemRight of bag.right) {
       if (itemLeft.item === itemRight.item) {
         sum += itemLeft.priority;
         found = true;

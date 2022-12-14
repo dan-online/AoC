@@ -311,6 +311,22 @@ class Item {
   }
 }
 
+class Bag {
+  public items: Item[] = [];
+
+  public constructor(items: Item[]) {
+    this.items = items;
+  }
+
+  public get left() {
+    return this.items.slice(0, this.items.length / 2);
+  }
+
+  public get right() {
+    return this.items.slice(this.items.length / 2);
+  }
+}
+
 const guideText = `vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
@@ -318,15 +334,33 @@ wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw`;
 
-export function getBags(): [Item[], Item[]][] {
-  return text.split('\n').map((x) => [
-    x
-      .split('')
-      .slice(0, x.length / 2)
-      .map((a) => new Item(a)),
-    x
-      .split('')
-      .slice(x.length / 2)
-      .map((a) => new Item(a))
-  ]);
+export function getBags(): Bag[] {
+  return text.split('\n').map((x) => new Bag(x.split('').map((y) => new Item(y))));
+}
+
+export function getGroups() {
+  const bags = getBags();
+  const groups = [];
+
+  for (let i = 0; i < bags.length; i += 3) {
+    const group = [];
+
+    group.push(bags[i]);
+    group.push(bags[i + 1]);
+    group.push(bags[i + 2]);
+
+    let id;
+    const { items } = group[0];
+
+    for (const item of items) {
+      if (group.filter((x) => x.items.find((x) => x.item === item.item)).length === group.length) {
+        id = item;
+        break;
+      }
+    }
+
+    if (id) groups.push({ bags: group, id });
+  }
+
+  return groups;
 }

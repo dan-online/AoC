@@ -1,9 +1,13 @@
 import { Area } from './input';
 
 const area = new Area();
+const start = performance.now();
 
 console.log(area.findInArea(4000000));
 
+const end = performance.now();
+
+console.log(`${end - start}ms`);
 // lol
 // console.log(area.findInArea(4000000));
 // console.log(area.multiThreadFind(12, 4000000));

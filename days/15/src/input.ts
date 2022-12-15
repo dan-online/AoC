@@ -13,44 +13,29 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3`;
 
-const text = `Sensor at x=3889276, y=3176133: closest beacon is at x=3738780, y=3090050
-Sensor at x=3545888, y=1389980: closest beacon is at x=3687798, y=2823020
-Sensor at x=2887269, y=2488344: closest beacon is at x=2809378, y=2513386
-Sensor at x=3990278, y=43134: closest beacon is at x=2307159, y=135337
-Sensor at x=3746631, y=2990632: closest beacon is at x=3738780, y=3090050
-Sensor at x=7523, y=59064: closest beacon is at x=278652, y=-182407
-Sensor at x=2662631, y=3349709: closest beacon is at x=2294322, y=3429562
-Sensor at x=3999326, y=3030235: closest beacon is at x=3738780, y=3090050
-Sensor at x=2788203, y=3722031: closest beacon is at x=3009520, y=4176552
-Sensor at x=1872146, y=1228203: closest beacon is at x=1213036, y=1428271
-Sensor at x=231045, y=2977983: closest beacon is at x=-362535, y=2000000
-Sensor at x=2233881, y=421153: closest beacon is at x=2307159, y=135337
-Sensor at x=3915820, y=2609677: closest beacon is at x=3687798, y=2823020
-Sensor at x=2959514, y=2529069: closest beacon is at x=2809378, y=2513386
-Sensor at x=1829825, y=2614275: closest beacon is at x=2809378, y=2513386
-Sensor at x=1031015, y=2036184: closest beacon is at x=1213036, y=1428271
-Sensor at x=3894267, y=3758546: closest beacon is at x=3738780, y=3090050
-Sensor at x=2653530, y=445121: closest beacon is at x=2307159, y=135337
-Sensor at x=1528274, y=1670020: closest beacon is at x=1213036, y=1428271
-Sensor at x=3839068, y=2974837: closest beacon is at x=3738780, y=3090050
-Sensor at x=254225, y=9603: closest beacon is at x=278652, y=-182407
-Sensor at x=2214848, y=3333326: closest beacon is at x=2294322, y=3429562
-Sensor at x=1008775, y=292264: closest beacon is at x=278652, y=-182407
-Sensor at x=2072077, y=6712: closest beacon is at x=2307159, y=135337
-Sensor at x=3344028, y=3459786: closest beacon is at x=3738780, y=3090050
-Sensor at x=984627, y=3991112: closest beacon is at x=2294322, y=3429562
-Sensor at x=198206, y=2034713: closest beacon is at x=-362535, y=2000000
-Sensor at x=460965, y=1150404: closest beacon is at x=1213036, y=1428271
-Sensor at x=2198999, y=3584784: closest beacon is at x=2294322, y=3429562
-Sensor at x=3212614, y=2899682: closest beacon is at x=3687798, y=2823020
-Sensor at x=3797078, y=2864795: closest beacon is at x=3687798, y=2823020
-Sensor at x=2465051, y=2871666: closest beacon is at x=2809378, y=2513386
-Sensor at x=2356218, y=3981953: closest beacon is at x=2294322, y=3429562
-Sensor at x=2389861, y=1856461: closest beacon is at x=2809378, y=2513386
-Sensor at x=2852352, y=2506253: closest beacon is at x=2809378, y=2513386
-Sensor at x=2275278, y=742411: closest beacon is at x=2307159, y=135337
-Sensor at x=1562183, y=3626443: closest beacon is at x=2294322, y=3429562
-Sensor at x=44398, y=534916: closest beacon is at x=278652, y=-182407`;
+const text = `Sensor at x=3907621, y=2895218: closest beacon is at x=3790542, y=2949630
+Sensor at x=1701067, y=3075142: closest beacon is at x=2275951, y=3717327
+Sensor at x=3532369, y=884718: closest beacon is at x=2733699, y=2000000
+Sensor at x=2362427, y=41763: closest beacon is at x=2999439, y=-958188
+Sensor at x=398408, y=3688691: closest beacon is at x=2275951, y=3717327
+Sensor at x=1727615, y=1744968: closest beacon is at x=2733699, y=2000000
+Sensor at x=2778183, y=3611924: closest beacon is at x=2275951, y=3717327
+Sensor at x=2452818, y=2533012: closest beacon is at x=2733699, y=2000000
+Sensor at x=88162, y=2057063: closest beacon is at x=-109096, y=390805
+Sensor at x=2985370, y=2315046: closest beacon is at x=2733699, y=2000000
+Sensor at x=2758780, y=3000106: closest beacon is at x=3279264, y=2775610
+Sensor at x=3501114, y=3193710: closest beacon is at x=3790542, y=2949630
+Sensor at x=313171, y=1016326: closest beacon is at x=-109096, y=390805
+Sensor at x=3997998, y=3576392: closest beacon is at x=3691556, y=3980872
+Sensor at x=84142, y=102550: closest beacon is at x=-109096, y=390805
+Sensor at x=3768533, y=3985372: closest beacon is at x=3691556, y=3980872
+Sensor at x=2999744, y=3998031: closest beacon is at x=3691556, y=3980872
+Sensor at x=3380504, y=2720962: closest beacon is at x=3279264, y=2775610
+Sensor at x=3357940, y=3730208: closest beacon is at x=3691556, y=3980872
+Sensor at x=1242851, y=838744: closest beacon is at x=-109096, y=390805
+Sensor at x=3991401, y=2367688: closest beacon is at x=3790542, y=2949630
+Sensor at x=3292286, y=2624894: closest beacon is at x=3279264, y=2775610
+Sensor at x=2194423, y=3990859: closest beacon is at x=2275951, y=3717327`;
 
 class Sensor {
   public x: number;

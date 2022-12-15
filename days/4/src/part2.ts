@@ -1,56 +1,21 @@
-import { Area } from './input';
+import { getElfPairings } from './input';
 
-const area = new Area();
+const pairs = getElfPairings();
+let sum = 0;
 
-console.log(area.findInArea(4000000));
+for (const pair of pairs) {
+  let found = false;
+  const { a, b } = pair;
 
-// lol
-// console.log(area.findInArea(4000000));
-// console.log(area.multiThreadFind(12, 4000000));
+  if (a.min >= b.min && b.max >= a.min) {
+    found = true;
+  }
 
-/*
-const promises: Promise<string>[] = [];
+  if (b.min >= a.min && a.max >= b.min) {
+    found = true;
+  }
 
-    for (let i = 0; i < threads; i++) {
-      const inmin = Math.floor((max / threads) * i);
-      const inmax = Math.floor((max / threads) * (i + 1));
+  if (found) sum++;
+}
 
-      promises.push(new Promise((resolve) => resolve(this.findInArea(inmax, inmin))));
-    }
-
-    return Promise.all(promises);
-    */
-
-// if (isMainThread) {
-//   const max = 4000000;
-//   const workers = [];
-
-//   process.stdin.resume();
-
-//   let total = 0;
-
-//   bc.onmessage = () => {
-//     total++;
-//     process.stdout.clearLine(-1);
-//     process.stdout.cursorTo(0);
-//     process.stdout.write(`${((total / max) * 100).toFixed(2)}%`);
-//   };
-
-//   for (let i = 0; i < 12; i++) {
-//     const inmin = Math.floor((max / 12) * i);
-//     const inmax = Math.floor((max / 12) * (i + 1));
-//     const worker = new Worker(__filename, { workerData: { inmin, inmax } });
-
-//     workers.push(worker);
-
-//     worker.on('error', console.error);
-//     worker.on('exit', (code) => {
-//       if (code !== 0) console.error(new Error(`Worker stopped with exit code ${code}`));
-//     });
-//   }
-// } else {
-//   const area = new Area();
-//   const { inmin, inmax } = workerData;
-
-//   console.log(area.findInArea(inmax, inmin));
-// }
+console.log(sum);

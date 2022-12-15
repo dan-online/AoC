@@ -5,6 +5,12 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"15@workspace:days/15":
+  version: 0.0.0-use.local
+  resolution: "15@workspace:days/15"
+  languageName: unknown
+  linkType: soft
+
 "1@workspace:days/1":
   version: 0.0.0-use.local
   resolution: "1@workspace:days/1"

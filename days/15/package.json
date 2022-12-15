@@ -1,5 +1,5 @@
 {
-  "name": "template",
+  "name": "15",
   "version": "1.0.0",
   "scripts": {
     "build": "tsup",

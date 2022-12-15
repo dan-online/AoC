@@ -35,6 +35,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"5@workspace:days/5":
+  version: 0.0.0-use.local
+  resolution: "5@workspace:days/5"
+  languageName: unknown
+  linkType: soft
+
 "@esbuild/android-arm@npm:0.15.18":
   version: 0.15.18
   resolution: "@esbuild/android-arm@npm:0.15.18"

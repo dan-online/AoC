@@ -11,6 +11,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"16@workspace:days/16":
+  version: 0.0.0-use.local
+  resolution: "16@workspace:days/16"
+  dependencies:
+    floyd-warshall: ^1.0.0
+  languageName: unknown
+  linkType: soft
+
 "1@workspace:days/1":
   version: 0.0.0-use.local
   resolution: "1@workspace:days/1"
@@ -1264,6 +1272,13 @@ __metadata:
   version: 3.2.7
   resolution: "flatted@npm:3.2.7"
   checksum: 427633049d55bdb80201c68f7eb1cbd533e03eac541f97d3aecab8c5526f12a20ccecaeede08b57503e772c769e7f8680b37e8d482d1e5f8d7e2194687f9ea35
+  languageName: node
+  linkType: hard
+
+"floyd-warshall@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "floyd-warshall@npm:1.0.0"
+  checksum: cb261715d1bb332460670351a73ed56044eeb3d7776ae3192c92cc45427d81ec1ddbc7afc6ee8ad0f5e24f3ae4a67b3ff0d835c3aadc106f58f25889601e9bd2
   languageName: node
   linkType: hard
 

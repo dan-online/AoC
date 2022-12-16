@@ -19,6 +19,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"17@workspace:days/17":
+  version: 0.0.0-use.local
+  resolution: "17@workspace:days/17"
+  languageName: unknown
+  linkType: soft
+
 "1@workspace:days/1":
   version: 0.0.0-use.local
   resolution: "1@workspace:days/1"

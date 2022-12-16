@@ -167,13 +167,12 @@ class Area {
 
   public checkRockAcross(rock: Rock) {
     if (jets[jetPosition] === undefined) {
-      jetPosition = 0;
+      jetPosition = -1;
     }
 
-    const movement = jets[jetPosition];
-
     jetPosition++;
-    console.log(movement);
+
+    const movement = jets[jetPosition];
 
     for (let line = 0; line < rock.shape.length; line++) {
       for (let col = 0; col < rock.shape[line].length; col++) {
@@ -244,7 +243,7 @@ class Area {
     writeFileSync('./output.txt', this.spaces.map((x, i) => `${this.spaces.length - i} ${x.join('')}`).join('\n'));
     console.log(
       this.spaces
-        .map((x, i) => `${this.spaces.length - i} ${x.join('')}`)
+        .map((x) => `${x.join('')}`)
         .join('\n')
         .slice(slice ? 0 : 0, slice ? 100 : undefined)
     );
@@ -283,23 +282,46 @@ class Area {
     this.emptySpaces();
     this.draw();
   }
+
+  public removeHeight() {
+    const originalLength = this.spaces.length;
+    const filtered = this.spaces.filter((x) => !x.every((y) => y === Space.Empty || y === Space.Wall));
+
+    this.spaces = filtered;
+    for (const rock of this.rocks) {
+      rock.y += filtered.length - originalLength;
+    }
+
+    this.height = this.spaces.length - 1;
+    this.emptySpaces();
+    this.draw();
+  }
 }
 
 const shapes = getRockShapes();
 const area = new Area(7, 4);
 let rockIndex = 0;
+const maxRocks = 10;
 
 function run() {
   area.step();
-  if (area.rocks.filter((x) => x.moving).length === 0 && area.rocks.length < 2022) {
-    if (rockIndex >= shapes.length) rockIndex = 0;
+  if (area.rocks.filter((x) => x.moving).length === 0 && area.rocks.length < maxRocks) {
+    // area.output();
+    if (!shapes[rockIndex]) rockIndex = 0;
+    if (area.rocks.length > 0) {
+      area.removeHeight();
+      // return area.output();
+    }
 
     const nextRock = new Rock(3, 0, shapes[rockIndex].shape);
     // area.addHeight(nextRock.height);
-    const indexOfRockLine = area.spaces.findIndex((x) => x.includes(Space.Rock));
-    const toAddLines = 4 + nextRock.shape.length - indexOfRockLine;
+    const indexOfLastRockLine = area.spaces.findIndex((x) => x.includes(Space.Rock)); // 4
+    // add enough lines so the next rock is 3 away from the last rock
+    // const toAddLines = 3 - indexOfLastRockLine + nextRock.height;
+    const toAddLines = nextRock.height + 3;
 
-    if (indexOfRockLine > -1) {
+    // console.log(toAddLines);
+    if (indexOfLastRockLine > -1) {
       if (toAddLines > 0) {
         area.addHeight(toAddLines);
       }
@@ -317,22 +339,18 @@ function run() {
     `Rocks: ${area.rocks.length} Moving: ${area.rocks.filter((x) => x.moving).length} Done: ${((area.rocks.length / 2022) * 100).toFixed(2)}%`
   );
 
-  if (area.rocks.length >= 2022 && area.rocks.filter((x) => x.moving).length === 0) {
+  if (area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0) {
     const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
 
+    area.removeHeight();
     console.log(area.output());
-    console.log(
-      '\nFinal height:',
-      height,
-      area.height - 2,
-      area.spaces.findIndex((x) => x.includes(Space.Rock))
-    );
+    console.log('\nFinal height:', height, area.height - 2, `with ${area.rocks.length} rocks`);
 
     return;
   }
 
   area.output();
-  setTimeout(run, 500);
+  setTimeout(run, 200);
   // setImmediate(run);
 
   // run();

@@ -35,7 +35,7 @@ enum Space {
 }
 
 export function getJetInput() {
-  return guideJet.split('').map((x) => (x === '>' ? JetInput.Right : JetInput.Left));
+  return jetInput.split('').map((x) => (x === '>' ? JetInput.Right : JetInput.Left));
 }
 
 const jets = getJetInput();
@@ -114,44 +114,13 @@ class Area {
     this.draw();
   }
 
-  public checkRock(rock: Rock, x: number, y: number) {
-    for (let line = 0; line < rock.shape.length; line++) {
-      for (let col = 0; col < rock.shape[line].length; col++) {
-        if (rock.shape[line][col] === Space.Empty) continue;
-        // if collides with wall, keep the x position the same
-        if (this.spaces[y + line][x + col] === Space.Wall) {
-          x = rock.x;
-        }
-
-        // if collides with rock only below, stop the rock, don't collide with self
-        if (this.spaces[y + line][x + col] === Space.Rock && line === rock.shape.length - 1) {
-          x = rock.x;
-          y = rock.y;
-          rock.stop();
-        }
-
-        // don't collide with rock on sides
-        if (this.spaces[y + line][x + col] === Space.Rock && line !== rock.shape.length - 1) {
-          x = rock.x;
-        }
-
-        // if collides with floor, stop the rock
-        if (this.spaces[y + line][x + col] === Space.Floor) {
-          x = rock.x;
-          y = rock.y;
-          rock.stop();
-        }
-      }
-    }
-
-    return { x, y };
-  }
+  // public checkRock(rock: Rock, x: number, y: number) {}
 
   public checkRockGoingDown(rock: Rock) {
     for (let line = 0; line < rock.shape.length; line++) {
       for (let col = 0; col < rock.shape[line].length; col++) {
         if (rock.shape[line][col] === Space.Empty) continue;
-        if (this.spaces[rock.y + line + 1][rock.x + col] === Space.Rock && line === rock.shape.length - 1) {
+        if (this.spaces[rock.y + line + 1][rock.x + col] === Space.Rock) {
           return;
         }
 
@@ -166,11 +135,12 @@ class Area {
   }
 
   public checkRockAcross(rock: Rock) {
-    if (jets[jetPosition] === undefined) {
-      jetPosition = -1;
-    }
-
     jetPosition++;
+    if (jets[jetPosition] === undefined) {
+      // console.log('RACE CONDITION');
+      // process.exit();
+      jetPosition = 0;
+    }
 
     const movement = jets[jetPosition];
 
@@ -245,7 +215,7 @@ class Area {
       this.spaces
         .map((x) => `${x.join('')}`)
         .join('\n')
-        .slice(slice ? 0 : 0, slice ? 100 : undefined)
+        .slice(slice ? 0 : 0, slice ? 9 * 20 : undefined)
     );
 
     console.log('');
@@ -301,7 +271,7 @@ class Area {
 const shapes = getRockShapes();
 const area = new Area(7, 4);
 let rockIndex = 0;
-const maxRocks = 10;
+const maxRocks = 1000000000000;
 
 function run() {
   area.step();
@@ -336,24 +306,32 @@ function run() {
   process.stdout.clearLine(-1);
   process.stdout.cursorTo(0);
   process.stdout.write(
-    `Rocks: ${area.rocks.length} Moving: ${area.rocks.filter((x) => x.moving).length} Done: ${((area.rocks.length / 2022) * 100).toFixed(2)}%`
+    `Rocks: ${area.rocks.length} Moving: ${area.rocks.filter((x) => x.moving).length} Done: ${((area.rocks.length / maxRocks) * 100).toFixed(2)}%`
   );
 
-  if (area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0) {
-    const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
+  // if (area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0) {
+  //   const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
 
-    area.removeHeight();
-    console.log(area.output());
-    console.log('\nFinal height:', height, area.height - 2, `with ${area.rocks.length} rocks`);
+  //   area.removeHeight();
+  //   console.log(area.output());
+  //   console.log('\nFinal height:', height, area.height, `with ${area.rocks.length} rocks`);
 
-    return;
-  }
+  //   return;
+  // }
 
-  area.output();
-  setTimeout(run, 200);
+  // // area.output(true);
+  // // setTimeout(run, 100);
   // setImmediate(run);
 
   // run();
 }
 
-run();
+while (!(area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0)) {
+  run();
+}
+
+const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
+
+area.removeHeight();
+console.log(area.output());
+console.log('\nFinal height:', height, area.height, `with ${area.rocks.length} rocks`);

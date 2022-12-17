@@ -1,1 +1,1 @@
-console.log('wooo');
+import './part1';

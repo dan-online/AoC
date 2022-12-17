@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:watch": "yarn workspace $1 build --watch",
+    "generate": "node scripts/generate.mjs $1",
     "start": "yarn workspace $1 start",
     "day": "cp -r ./days/template ./days/$1; "
   },
@@ -11,6 +12,7 @@
     "days/*"
   ],
   "devDependencies": {
+    "@favware/colorette-spinner": "^1.0.1",
     "@sapphire/eslint-config": "^4.3.8",
     "@sapphire/ts-config": "^3.3.4",
     "@types/node": "^18.11.17",
@@ -19,6 +21,7 @@
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "file-system": "^2.2.2",
     "prettier": "^2.8.1",
     "tslib": "^2.4.1",
     "turbo": "^1.6.3",

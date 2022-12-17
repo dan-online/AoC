@@ -5,6 +5,12 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"10@workspace:days/10":
+  version: 0.0.0-use.local
+  resolution: "10@workspace:days/10"
+  languageName: unknown
+  linkType: soft
+
 "15@workspace:days/15":
   version: 0.0.0-use.local
   resolution: "15@workspace:days/15"
@@ -141,6 +147,15 @@ __metadata:
     minimatch: ^3.1.2
     strip-json-comments: ^3.1.1
   checksum: 73e39c833deafde8d8706e6fa9b52b6d99927c094ead8e405ea4174e8197ec24aac9ba88ae38cc8ad32eaccf07b9c7fc5dc70761d1fba6da41a928691447305f
+  languageName: node
+  linkType: hard
+
+"@favware/colorette-spinner@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@favware/colorette-spinner@npm:1.0.1"
+  dependencies:
+    colorette: "*"
+  checksum: 839bfa3bd4480da4ce1c5cf34fe617769ed8c0298ceab440401d5849020d9cf95537a634c33e22f452390cd68034b818cf92c471e360cab0e68be45c954cd636
   languageName: node
   linkType: hard
 
@@ -538,6 +553,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "AoC@workspace:."
   dependencies:
+    "@favware/colorette-spinner": ^1.0.1
     "@sapphire/eslint-config": ^4.3.8
     "@sapphire/ts-config": ^3.3.4
     "@types/node": ^18.11.17
@@ -546,6 +562,7 @@ __metadata:
     eslint: ^8.30.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1
+    file-system: ^2.2.2
     prettier: ^2.8.1
     tslib: ^2.4.1
     tsup: ^6.5.0
@@ -850,6 +867,13 @@ __metadata:
   bin:
     color-support: bin.js
   checksum: 9b7356817670b9a13a26ca5af1c21615463b500783b739b7634a0c2047c16cef4b2865d7576875c31c3cddf9dd621fa19285e628f20198b233a5cfdda6d0793b
+  languageName: node
+  linkType: hard
+
+"colorette@npm:*":
+  version: 2.0.19
+  resolution: "colorette@npm:2.0.19"
+  checksum: 888cf5493f781e5fcf54ce4d49e9d7d698f96ea2b2ef67906834bb319a392c667f9ec69f4a10e268d2946d13a9503d2d19b3abaaaf174e3451bfe91fb9d82427
   languageName: node
   linkType: hard
 
@@ -1482,6 +1506,25 @@ __metadata:
   dependencies:
     flat-cache: ^3.0.4
   checksum: f49701feaa6314c8127c3c2f6173cfefff17612f5ed2daaafc6da13b5c91fd43e3b2a58fd0d63f9f94478a501b167615931e7200e31485e320f74a33885a9c74
+  languageName: node
+  linkType: hard
+
+"file-match@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "file-match@npm:1.0.2"
+  dependencies:
+    utils-extend: ^1.0.6
+  checksum: 7d36c26118054d64798d8660a65453ad1e2b1348861f4e0eb1ebc237b1cd43bc2394787b431b8515db7b21057cb171f543c44dcc82bb5efd27c346e77a6ea2c9
+  languageName: node
+  linkType: hard
+
+"file-system@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "file-system@npm:2.2.2"
+  dependencies:
+    file-match: ^1.0.1
+    utils-extend: ^1.0.4
+  checksum: 70d44061e29f3a2679663c7c3d09395c877a5b5152b17427281fe1006763e0e6956fd0810a2da4a11a9804799544121979366f7cc21caf3f1521f76e8d15679b
   languageName: node
   linkType: hard
 
@@ -3017,6 +3060,13 @@ __metadata:
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 474acf1146cb2701fe3b074892217553dfcf9a031280919ba1b8d651a068c9b15d863b7303cb15bd00a862b498e6cf4ad7b4a08fb134edd5a6f7641681cb54a2
+  languageName: node
+  linkType: hard
+
+"utils-extend@npm:^1.0.4, utils-extend@npm:^1.0.6":
+  version: 1.0.8
+  resolution: "utils-extend@npm:1.0.8"
+  checksum: 91722b70ad480926856828a6c970e85a5a69856ddaafa3fcca8c7003ed0feb8a63c3e6574d174f11848f03a1b149419498e5cff2153f324f0b451f3d92316f16
   languageName: node
   linkType: hard
 

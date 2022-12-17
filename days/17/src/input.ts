@@ -103,7 +103,11 @@ class Area {
   }
 
   public step() {
+    const startRocks = performance.now();
+
     this.moveRocksDown(this.direction);
+
+    const endRocks = performance.now() - startRocks;
 
     if (this.direction === 'across') {
       this.direction = 'down';
@@ -111,7 +115,13 @@ class Area {
       this.direction = 'across';
     }
 
+    const startDraw = performance.now();
+
     this.draw();
+
+    const endDraw = performance.now() - startDraw;
+
+    return { rocks: endRocks, draw: endDraw };
   }
 
   // public checkRock(rock: Rock, x: number, y: number) {}
@@ -271,15 +281,23 @@ class Area {
 const shapes = getRockShapes();
 const area = new Area(7, 4);
 let rockIndex = 0;
-const maxRocks = 1000000000000;
+const maxRocks = jetInput.length * 5;
 
 function run() {
-  area.step();
+  const perf: { rocks: number; draw: number; remove: number } = { rocks: 0, draw: 0, remove: 0 };
+  const stepPerf = area.step();
+
+  perf.rocks = stepPerf.rocks;
+  perf.draw = stepPerf.draw;
+
   if (area.rocks.filter((x) => x.moving).length === 0 && area.rocks.length < maxRocks) {
     // area.output();
     if (!shapes[rockIndex]) rockIndex = 0;
     if (area.rocks.length > 0) {
+      const start = performance.now();
+
       area.removeHeight();
+      perf.remove = performance.now() - start;
       // return area.output();
     }
 
@@ -306,7 +324,9 @@ function run() {
   process.stdout.clearLine(-1);
   process.stdout.cursorTo(0);
   process.stdout.write(
-    `Rocks: ${area.rocks.length} Moving: ${area.rocks.filter((x) => x.moving).length} Done: ${((area.rocks.length / maxRocks) * 100).toFixed(2)}%`
+    `Rocks: ${area.rocks.length} Moving: ${area.rocks.filter((x) => x.moving).length} Done: ${((area.rocks.length / maxRocks) * 100).toFixed(
+      2
+    )}% Time: ${perf.draw.toFixed(2)}ms draw ${perf.rocks.toFixed(2)}ms rocks ${perf.remove.toFixed(2)}ms remove`
   );
 
   // if (area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0) {
@@ -319,8 +339,8 @@ function run() {
   //   return;
   // }
 
-  // // area.output(true);
-  // // setTimeout(run, 100);
+  // area.output(true);
+  // setTimeout(run, 1);
   // setImmediate(run);
 
   // run();
@@ -329,9 +349,11 @@ function run() {
 while (!(area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0)) {
   run();
 }
+// run();
 
 const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
 
+area.output();
 area.removeHeight();
-console.log(area.output());
+
 console.log('\nFinal height:', height, area.height, `with ${area.rocks.length} rocks`);

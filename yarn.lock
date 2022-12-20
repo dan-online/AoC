@@ -17,6 +17,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"12@workspace:days/12":
+  version: 0.0.0-use.local
+  resolution: "12@workspace:days/12"
+  dependencies:
+    chalk: ^5.2.0
+  languageName: unknown
+  linkType: soft
+
 "15@workspace:days/15":
   version: 0.0.0-use.local
   resolution: "15@workspace:days/15"

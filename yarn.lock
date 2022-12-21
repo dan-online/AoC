@@ -25,6 +25,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"13@workspace:days/13":
+  version: 0.0.0-use.local
+  resolution: "13@workspace:days/13"
+  dependencies:
+    "@types/uuid": ^9
+    uuid: ^9.0.0
+  languageName: unknown
+  linkType: soft
+
 "15@workspace:days/15":
   version: 0.0.0-use.local
   resolution: "15@workspace:days/15"

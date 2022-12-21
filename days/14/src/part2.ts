@@ -81,5 +81,3 @@ while (!scan.sand.find((x) => x.x === startX + 1 && x.y === 0 && !x.moving)) {
 
 console.log(scan.output());
 console.log(scan.sand.length);
-// 13518 too low
-// 28822 too high

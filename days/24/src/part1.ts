@@ -1,42 +1,47 @@
 import { getMap, Location } from './input';
 
 const map = getMap();
-let lastOutput = Date.now();
+let lastOutput: number;
+let num = 0;
 
-function bfs(start: Location, end: Location): { path: Location[]; steps: number } {
-  const visited: { path: Location[]; loc: Location; minutes: number }[] = [];
-  const queue: [Location, Location[], number][] = [];
+function bfs(start: Location, end: Location): { steps: number } {
+  const visited: { loc: Location; minutes: number }[] = [];
+  const queue: [Location, number][] = [];
 
-  queue.push([start, [start], 1]);
+  queue.push([start, 1]);
   while (queue.length > 0) {
-    const [current, path, minutes] = queue.shift()!;
+    num++;
+
+    const [current, minutes] = queue.shift()!;
 
     if (current.x === end.x && current.y === end.y) {
-      return { path, steps: minutes };
+      return { steps: minutes };
     }
 
     // const start = performance.now();
-    const { candidates, grid, blizzards } = map.getLocationCandidates(current, minutes);
+    const { candidates, grid, blizzards } = map.getLocationCandidates(current, minutes + 1);
 
-    if (Date.now() - lastOutput > 1000) {
+    if (!lastOutput || Date.now() - lastOutput > 1000) {
       console.clear();
       // console.log(`${(performance.now() - start).toFixed(2)}ms`);
-      console.log(`Minutes: ${minutes}\n${map.getOutput(grid, blizzards, path[path.length - 1], candidates, path)}`);
+      console.log(`Minutes: ${minutes} at ${num}/s Queue: ${queue.length}\n${map.getOutput(grid, blizzards, current, candidates)}`);
+
       lastOutput = Date.now();
+      num = 0;
     }
 
     for (const neighbour of candidates) {
-      if (!visited.find((x) => x.loc.x === neighbour.x && x.loc.y === neighbour.y && x.minutes === minutes)) {
-        visited.push({ loc: neighbour, path: [...path, neighbour], minutes });
-        queue.push([neighbour, [...path, neighbour], minutes + 1]);
+      if (!visited.find((x) => x.loc.x === neighbour.x && x.loc.y === neighbour.y && x.minutes >= minutes)) {
+        visited.push({ loc: neighbour, minutes });
+        queue.push([neighbour, minutes + 1]);
       }
     }
   }
 
-  return { path: [], steps: -1 };
+  return { steps: -1 };
 }
 
-const { path, steps } = bfs(map.start, map.end);
+const { steps } = bfs(map.start, map.end);
 
 console.log('Found!');
 

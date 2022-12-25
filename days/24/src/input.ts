@@ -115,6 +115,11 @@ class Map {
     const grid = this.grid.map((row) => row.map((x) => new Location(x.x, x.y, x.type)));
     const blizzards = this.blizzards.map((x) => new Location(x.x, x.y, x.type));
 
+    // if (minutes > grid[0].length || minutes > grid.length) {
+    //   // make minutes the remainder of the grid length
+    //   minutes %= grid[0].length * grid.length;
+    // }
+
     while (minutes > 0) {
       for (const blizzard of blizzards) {
         switch (blizzard.type as Omit<Grid, Grid.Wall | Grid.Empty>) {

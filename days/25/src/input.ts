@@ -168,7 +168,6 @@ class SNAFUToNumbers {
   public get real() {
     const numbers = [];
 
-    // convert numbers to SNAFU
     for (let i = this.numbers.length - 1; i >= 0; i--) {
       const number = this.numbers.slice().reverse()[i];
 
@@ -191,7 +190,6 @@ export class NumbersToSNAFU {
   }
 
   public get real() {
-    // convert numbers back to snafu, for example [4, 8, 9, 0] => 2=-1=0
     const numbers = [];
     let number = Number(this.numbers.join(''));
 

@@ -98,6 +98,8 @@ __metadata:
 "24@workspace:days/24":
   version: 0.0.0-use.local
   resolution: "24@workspace:days/24"
+  dependencies:
+    chalk: ^5.2.0
   languageName: unknown
   linkType: soft
 

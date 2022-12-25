@@ -6,7 +6,8 @@
     "build:watch": "yarn workspace $1 build --watch",
     "generate": "node scripts/generate.mjs $1",
     "start": "yarn workspace $1 start",
-    "day": "cp -r ./days/template ./days/$1; "
+    "day": "cp -r ./days/template ./days/$1; ",
+    "lint": "eslint days --ext mjs,js,ts --fix"
   },
   "workspaces": [
     "days/*"

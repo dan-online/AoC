@@ -5,6 +5,7 @@ abcryxxl
 accszExk
 acctuvwj
 abdefghi`;
+
 const input = `abaaaaaccccccccccccccccccaaaaaaaaaaaaaccccaaaaaaaccccccccccccccccccccccccccccaaaaaa
 abaaaaaaccaaaacccccccccccaaaaaaaaacaaaacaaaaaaaaaacccccccccccccccccccccccccccaaaaaa
 abaaaaaacaaaaaccccccccccaaaaaaaaaaaaaaacaaaaaaaaaacccccccccccccaacccccccccccccaaaaa
@@ -62,8 +63,10 @@ export class Height {
     this.x = x;
     this.y = y;
   }
+
   public get height(): number {
-    let char = this.char;
+    let { char } = this;
+
     if (this.char === currentPosition) {
       char = 'a';
     } else if (this.char === bestLocation) {
@@ -75,17 +78,20 @@ export class Height {
 
   public get children(): Height[] {
     const children: Height[] = [];
-
     const left = heightmap.find((x) => x.x === this.x - 1 && x.y === this.y);
+
     if (left) children.push(left);
 
     const right = heightmap.find((x) => x.x === this.x + 1 && x.y === this.y);
+
     if (right) children.push(right);
 
     const top = heightmap.find((x) => x.x === this.x && x.y === this.y - 1);
+
     if (top) children.push(top);
 
     const bottom = heightmap.find((x) => x.x === this.x && x.y === this.y + 1);
+
     if (bottom) children.push(bottom);
 
     return children;
@@ -101,7 +107,6 @@ export class Height {
     if (this.char === 'E') return 0;
 
     const destination = heightmap.find((x) => x.char === 'E')!;
-
     const xDistance = destination.x - this.x;
     const yDistance = destination.y - this.y;
     const hDistance = destination.height - this.height;
@@ -116,6 +121,7 @@ export const getHeightMap = () => {
 
   for (const line of lines) {
     const heights = line.split('').map((char, i) => new Height(char, i, lines.indexOf(line)));
+
     heightmap.push(...heights);
   }
 
@@ -133,12 +139,12 @@ export const output = (path: Height[]) => {
   for (let line = 0; line < heightmap.length / width; line++) {
     for (let char = 0; char < width; char++) {
       lines[line] = lines[line] || [];
+
       const inPathIdx = path.findIndex((x) => x.x === char && x.y === line);
       const inPath = path[inPathIdx];
       // use V to indicate down, > to indicate right, < to indicate left and ^ to indicate up
       let direction = chalk.bgWhite('X');
-
-      let rainbow = [
+      const rainbow = [
         '#FF0000',
         '#FF3B00',
         '#FF7600',
@@ -173,9 +179,11 @@ export const output = (path: Height[]) => {
       }
 
       const height = heightmap.find((x) => x.x === char && x.y === line)!;
+
       lines[line].push(inPath ? direction : height.height > 3 ? chalk.hex(rainbow[height.height - 1])(height.char) : height.char);
     }
-    process.stdout.write(lines[line].join('') + '\n');
+
+    process.stdout.write(`${lines[line].join('')}\n`);
   }
 
   // console.log(lines.map((x) => x.map((y) => y).join('')).join('\n'));

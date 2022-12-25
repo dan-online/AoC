@@ -1,11 +1,11 @@
 import { getPairs } from './input';
 
 const pairs = getPairs();
-
 const indices = [];
 
 for (const pair of pairs) {
-  let indice = pairs.indexOf(pair) + 1;
+  const indice = pairs.indexOf(pair) + 1;
+
   if (pair.isValid()) {
     console.log(`Pair ${indice} is valid`);
     indices.push(indice);

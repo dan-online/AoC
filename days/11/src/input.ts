@@ -160,9 +160,11 @@ class Monkey {
 
         // console.log(`    Worry level is divided by 3 to ${newLevel}.`);
       } else {
-        newLevel = newLevel % monkeys.reduce((prev, curr) => prev * curr.testDivisible, 1);
+        newLevel %= monkeys.reduce((prev, curr) => prev * curr.testDivisible, 1);
       }
+
       newLevel = Math.floor(newLevel);
+
       const divisable = newLevel % this.testDivisible === 0;
       // console.log(`    Worry level is ${divisable ? '' : 'not '}divisible by ${this.testDivisible}.`);
 

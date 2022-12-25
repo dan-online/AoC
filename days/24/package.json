@@ -10,5 +10,8 @@
     "node": ">=16.6.0",
     "npm": ">=7.0.0"
   },
-  "keywords": []
+  "keywords": [],
+  "dependencies": {
+    "chalk": "^5.2.0"
+  }
 }

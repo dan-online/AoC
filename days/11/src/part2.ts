@@ -5,7 +5,7 @@ const oldLog = console.log;
 const update = (round: number, time?: number) => {
   process.stdout.clearLine(-1);
   process.stdout.cursorTo(0);
-  process.stdout.write(`Round ${round}/${10000} (${((round / 10000) * 100).toFixed(2)}%))` + (time ? ` at ${time.toFixed(2)}ms` : ''));
+  process.stdout.write(`Round ${round}/${10000} (${((round / 10000) * 100).toFixed(2)}%))${time ? ` at ${time.toFixed(2)}ms` : ''}`);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

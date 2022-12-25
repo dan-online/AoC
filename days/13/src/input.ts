@@ -488,7 +488,7 @@ export class Pair {
 
   public divider = false;
 
-  constructor(left: Packet, right: Packet, divider?: boolean) {
+  public constructor(left: Packet, right: Packet, divider?: boolean) {
     this.left = left;
     this.right = right;
     this.divider = divider || false;
@@ -499,8 +499,10 @@ export class Pair {
     if (this.left.length === 0) return 0;
     if (Array.isArray(this.left)) {
       const p = new Pair(this.left[0], []);
+
       return p.first - (this.divider ? 0.1 : 0);
     }
+
     return 0;
   }
 
@@ -517,11 +519,14 @@ export class Pair {
       for (let i = 0; i < this.left.length; i++) {
         if (this.left[i] === undefined) return true;
         if (this.right[i] === undefined) return false;
+
         const p = new Pair(this.left[i], this.right[i]);
         const validity = p.isValid();
+
         if (validity === undefined) continue;
         return validity;
       }
+
       if (this.left.length !== this.right.length) return true;
     }
 
@@ -529,6 +534,7 @@ export class Pair {
     if (Array.isArray(this.left) && isNumber(this.right)) {
       return new Pair(this.left, [this.right]).isValid();
     }
+
     if (isNumber(this.left) && Array.isArray(this.right)) {
       return new Pair([this.left], this.right).isValid();
     }
@@ -586,12 +592,15 @@ export class Pair {
 
 export const getPairs = () => {
   const pairsInputs = input.split('\n\n');
+
   for (const pairLines of pairsInputs) {
     const pair = pairLines.split('\n');
     const left = JSON.parse(pair[0]);
     const right = JSON.parse(pair[1]);
     const p = new Pair(left, right);
+
     pairs.push(p);
   }
+
   return pairs;
 };

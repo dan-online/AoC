@@ -3,12 +3,15 @@ import { getPairs, Pair } from './input';
 const pairs = getPairs();
 
 for (const pair of pairs) {
-  let indice = pairs.indexOf(pair) + 1;
+  const indice = pairs.indexOf(pair) + 1;
+
   if (pair.isValid()) {
     console.log(`Pair ${indice} is valid`);
   } else {
     console.log(`Pair ${indice} is invalid`);
-    let { left, right } = pair;
+
+    const { left, right } = pair;
+
     pair.right = left;
     pair.left = right;
     if (pair.isValid()) {
@@ -20,9 +23,9 @@ for (const pair of pairs) {
 }
 
 const output = [];
-
 const dividers = [new Pair([[2]], [], true), new Pair([[6]], [], true)];
 const packets = [...pairs.map((pair) => new Pair(pair.left, [])), ...pairs.map((pair) => new Pair(pair.right, [])), ...dividers];
+
 // const packets = [...pairs.map((pair) => new Pair(pair.left, [])), ...pairs.map((pair) => new Pair(pair.right, []))];
 // const dividers = packets.filter(
 // (x) => Array.isArray(x.left) && x.left.length === 1 && Array.isArray(x.left[0]) && x.left[0].length === 1 && typeof x.left[0][0] === 'number'
@@ -30,15 +33,16 @@ const packets = [...pairs.map((pair) => new Pair(pair.left, [])), ...pairs.map((
 packets.sort((a, b) => a.first - b.first);
 
 for (const packet of packets) {
-  output.push(packet.first.toString().padStart(2, ' ') + ': ' + JSON.stringify(packet.left));
+  output.push(`${packet.first.toString().padStart(2, ' ')}: ${JSON.stringify(packet.left)}`);
 }
 
 const indices = [];
 
 for (let idx = 0; idx < packets.length; idx++) {
-  let indice = idx + 1;
+  const indice = idx + 1;
   const packet = packets[idx];
-  if (dividers.find((x) => x.id == packet.id)) {
+
+  if (dividers.find((x) => x.id === packet.id)) {
     indices.push(indice);
   }
 }
@@ -48,6 +52,7 @@ console.log(
   'Dividers:',
   dividers.map((x) => x.left)
 );
+
 console.log('Indices:', indices);
 console.log(indices.reduce((prev, curr) => prev * curr, 1));
 

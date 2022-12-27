@@ -12,6 +12,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "bee-queue": "^1.5.0",
     "chalk": "^5.2.0"
   }
 }

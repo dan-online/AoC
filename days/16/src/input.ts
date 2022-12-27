@@ -1,4 +1,4 @@
-const guideText = `Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
+const guideInput = `Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA
 Valve CC has flow rate=2; tunnels lead to valves DD, BB
 Valve DD has flow rate=20; tunnels lead to valves CC, AA, EE
@@ -9,11 +9,7 @@ Valve HH has flow rate=22; tunnel leads to valve GG
 Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II`;
 
-// const guideText = `Valve AA has flow rate=0; tunnels lead to valves BB, CC
-// Valve BB has flow rate=13; tunnels lead to valves CC, AA
-// Valve CC has flow rate=2; tunnels lead to valves AA, BB`
-
-const text = `Valve SZ has flow rate=0; tunnels lead to valves GQ, YZ
+const input = `Valve SZ has flow rate=0; tunnels lead to valves GQ, YZ
 Valve SP has flow rate=0; tunnels lead to valves LJ, AA
 Valve LQ has flow rate=0; tunnels lead to valves EY, JT
 Valve AT has flow rate=17; tunnels lead to valves DX, BU, NE, BR, TD
@@ -73,6 +69,7 @@ Valve RK has flow rate=9; tunnels lead to valves DF, JH, UE
 Valve OW has flow rate=0; tunnels lead to valves YL, GQ
 Valve XC has flow rate=0; tunnels lead to valves EY, EB`;
 
+const i = process.argv.find((x) => x === '--prod') ? input : guideInput;
 const valves: Valve[] = [];
 
 export class Valve {
@@ -93,7 +90,7 @@ export class Valve {
 }
 
 export function getValves() {
-  for (const line of guideText.split('\n')) {
+  for (const line of i.split('\n')) {
     const [valve, tunnel] = line.split('; ');
     const [name, flow] = valve.split('Valve ')[1].split(' has flow rate=');
     const tunnels = tunnel.split('valve')[1].split(' ').slice(1).join(' ').split(', ');

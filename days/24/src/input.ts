@@ -1,5 +1,3 @@
-import chalk from 'chalk';
-
 const guideInput = `#.######
 #>>.<^<#
 #.<..<<#
@@ -92,16 +90,28 @@ class Map {
           .map((loc) => {
             const bliz = blizzards.filter((x) => x.x === loc.x && x.y === loc.y);
 
+            // if (me.x === loc.x && me.y === loc.y) {
+            //   return chalk.green('M');
+            // }
+
+            // if (path && path.find((x) => x.x === loc.x && x.y === loc.y)) {
+            //   return chalk.blue('P');
+            // }
+
+            // if (candidates.find((x) => x.x === loc.x && x.y === loc.y)) {
+            //   return chalk.red('C');
+            // }
+
             if (me.x === loc.x && me.y === loc.y) {
-              return chalk.green('M');
+              return 'M';
             }
 
             if (path && path.find((x) => x.x === loc.x && x.y === loc.y)) {
-              return chalk.blue('P');
+              return 'P';
             }
 
             if (candidates.find((x) => x.x === loc.x && x.y === loc.y)) {
-              return chalk.red('C');
+              return 'C';
             }
 
             return bliz.length > 0 ? (bliz.length > 1 ? bliz.length : bliz[0].type) : loc.type;

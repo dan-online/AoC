@@ -9,14 +9,7 @@ const queue = new Queue('day24', {
 });
 
 const clearJobs = async () => {
-  for (const queues of queue.jobs) {
-    for (const job of queues) {
-      if (typeof job === 'string') await queue.removeJob(job);
-      else {
-        await job.remove();
-      }
-    }
-  }
+  await queue.destroy();
 };
 
 const { end, start } = map;
@@ -131,13 +124,15 @@ const jobProcess = async (job: Job<{ location: Location; time: number }>, done: 
 if (isMainThread) {
   const workers: Worker[] = [];
 
-  void queue.createJob({ location: start, time: 0 }).save();
+  void clearJobs().then(async () => {
+    await queue.createJob({ location: start, time: 0 }).save();
+  });
 
   for (const _ of cpus()) {
     workers.push(new Worker(__filename, { argv: process.argv }));
   }
 
-  setInterval(async () => {
+  const interval = setInterval(async () => {
     process.stdout.clearLine(-1);
     process.stdout.cursorTo(0);
 
@@ -148,6 +143,11 @@ if (isMainThread) {
 
   queue.on('job succeeded', async (job, result) => {
     if (result === undefined) return;
+
+    clearInterval(interval);
+    process.stdout.clearLine(-1);
+    process.stdout.cursorTo(0);
+
     console.log('Job succeeded with result', result);
 
     for (const worker of workers) {

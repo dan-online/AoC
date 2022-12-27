@@ -133,13 +133,13 @@ if (isMainThread) {
   }
 
   const interval = setInterval(async () => {
+    const stats = await queue.checkHealth();
+
     process.stdout.clearLine(-1);
     process.stdout.cursorTo(0);
 
-    const stats = await queue.checkHealth();
-
     process.stdout.write(`Queue has active: ${stats.active}, waiting: ${stats.waiting}, completed: ${stats.succeeded}`);
-  }, 200);
+  }, 1000);
 
   queue.on('job succeeded', async (job, result) => {
     if (result === undefined) return;
@@ -159,7 +159,7 @@ if (isMainThread) {
     process.exit();
   });
 } else {
-  queue.process(jobProcess);
+  queue.process(100, jobProcess);
 }
 
 // console.log();

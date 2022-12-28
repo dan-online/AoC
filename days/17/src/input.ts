@@ -21,11 +21,13 @@ const rocks = `####
 
 const guideJet = `>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>`;
 
+export const i = process.argv.find((x) => x === '--prod') ? jetInput : guideJet;
+
 enum JetInput {
   Left = -1,
   Right = 1
 }
-enum Space {
+export enum Space {
   FallingRock = '@',
   Rock = '#',
   Empty = '.',
@@ -35,15 +37,16 @@ enum Space {
 }
 
 export function getJetInput() {
-  return jetInput.split('').map((x) => (x === '>' ? JetInput.Right : JetInput.Left));
+  return i.split('').map((x) => (x === '>' ? JetInput.Right : JetInput.Left));
 }
 
 const jets = getJetInput();
 let jetPosition = -1;
 
-class Rock {
+export class Rock {
   // public jetPosition = -1;
   public moving = true;
+  public affectedByJet = 0;
   public x: number;
   public y: number;
   public shape: Space[][];
@@ -87,7 +90,7 @@ export function getRockShapes() {
     .map((x) => new Rock(0, 0, x));
 }
 
-class Area {
+export class Area {
   public spaces: Space[][] = [];
   public rocks: Rock[] = [];
   public width: number;
@@ -103,11 +106,11 @@ class Area {
   }
 
   public step() {
-    const startRocks = performance.now();
+    performance.mark('startMoveRocksDown');
 
     this.moveRocksDown(this.direction);
 
-    const endRocks = performance.now() - startRocks;
+    performance.mark('endMoveRocksDown');
 
     if (this.direction === 'across') {
       this.direction = 'down';
@@ -115,13 +118,14 @@ class Area {
       this.direction = 'across';
     }
 
-    const startDraw = performance.now();
+    performance.mark('startDraw');
 
     this.draw();
 
-    const endDraw = performance.now() - startDraw;
+    performance.mark('endDraw');
 
-    return { rocks: endRocks, draw: endDraw };
+    performance.measure('rocks', 'startMoveRocksDown', 'endMoveRocksDown');
+    performance.measure('draw', 'startDraw', 'endDraw');
   }
 
   // public checkRock(rock: Rock, x: number, y: number) {}
@@ -147,8 +151,6 @@ class Area {
   public checkRockAcross(rock: Rock) {
     jetPosition++;
     if (jets[jetPosition] === undefined) {
-      // console.log('RACE CONDITION');
-      // process.exit();
       jetPosition = 0;
     }
 
@@ -168,6 +170,8 @@ class Area {
         }
       }
     }
+
+    rock.affectedByJet++;
 
     return movement;
   }
@@ -202,9 +206,33 @@ class Area {
   }
 
   public draw() {
+    performance.mark('startEmptySpaces');
+
     this.emptySpaces();
+
+    performance.mark('endEmptySpaces');
+
+    performance.mark('startFillInitial');
     this.fillInitial();
+
+    performance.mark('endFillInitial');
+
+    performance.mark('startDrawRocks');
     this.drawRocks();
+
+    performance.mark('endDrawRocks');
+
+    performance.measure(' emptySpaces', 'startEmptySpaces', 'endEmptySpaces');
+    performance.measure(' fillInitial', 'startFillInitial', 'endFillInitial');
+    performance.measure(' drawRocks', 'startDrawRocks', 'endDrawRocks');
+
+    // const rowToStop = this.spaces.findIndex((x) => x.every((y) => y === Space.Wall || y === Space.Rock));
+
+    // if (rowToStop !== -1) {
+    //   this.spaces = this.spaces.slice(0, rowToStop);
+
+    //   this.rocks = this.rocks.filter((x) => x.y < rowToStop);
+    // }
   }
 
   public drawRocks() {
@@ -218,14 +246,14 @@ class Area {
     }
   }
 
-  public output(slice = false) {
+  public output(sliceLines?: number) {
     console.log('');
     writeFileSync('./output.txt', this.spaces.map((x, i) => `${this.spaces.length - i} ${x.join('')}`).join('\n'));
     console.log(
       this.spaces
         .map((x) => `${x.join('')}`)
+        .slice(0, sliceLines || 0)
         .join('\n')
-        .slice(slice ? 0 : 0, slice ? 9 * 20 : undefined)
     );
 
     console.log('');
@@ -277,83 +305,3 @@ class Area {
     this.draw();
   }
 }
-
-const shapes = getRockShapes();
-const area = new Area(7, 4);
-let rockIndex = 0;
-const maxRocks = jetInput.length * 5;
-
-function run() {
-  const perf: { rocks: number; draw: number; remove: number } = { rocks: 0, draw: 0, remove: 0 };
-  const stepPerf = area.step();
-
-  perf.rocks = stepPerf.rocks;
-  perf.draw = stepPerf.draw;
-
-  if (area.rocks.filter((x) => x.moving).length === 0 && area.rocks.length < maxRocks) {
-    // area.output();
-    if (!shapes[rockIndex]) rockIndex = 0;
-    if (area.rocks.length > 0) {
-      const start = performance.now();
-
-      area.removeHeight();
-      perf.remove = performance.now() - start;
-      // return area.output();
-    }
-
-    const nextRock = new Rock(3, 0, shapes[rockIndex].shape);
-    // area.addHeight(nextRock.height);
-    const indexOfLastRockLine = area.spaces.findIndex((x) => x.includes(Space.Rock)); // 4
-    // add enough lines so the next rock is 3 away from the last rock
-    // const toAddLines = 3 - indexOfLastRockLine + nextRock.height;
-    const toAddLines = nextRock.height + 3;
-
-    // console.log(toAddLines);
-    if (indexOfLastRockLine > -1) {
-      if (toAddLines > 0) {
-        area.addHeight(toAddLines);
-      }
-    } else {
-      area.addHeight(1);
-    }
-
-    area.addRock(nextRock);
-    rockIndex++;
-  }
-
-  process.stdout.clearLine(-1);
-  process.stdout.cursorTo(0);
-  process.stdout.write(
-    `Rocks: ${area.rocks.length} Moving: ${area.rocks.filter((x) => x.moving).length} Done: ${((area.rocks.length / maxRocks) * 100).toFixed(
-      2
-    )}% Time: ${perf.draw.toFixed(2)}ms draw ${perf.rocks.toFixed(2)}ms rocks ${perf.remove.toFixed(2)}ms remove`
-  );
-
-  // if (area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0) {
-  //   const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
-
-  //   area.removeHeight();
-  //   console.log(area.output());
-  //   console.log('\nFinal height:', height, area.height, `with ${area.rocks.length} rocks`);
-
-  //   return;
-  // }
-
-  // area.output(true);
-  // setTimeout(run, 1);
-  // setImmediate(run);
-
-  // run();
-}
-
-while (!(area.rocks.length >= maxRocks && area.rocks.filter((x) => x.moving).length === 0)) {
-  run();
-}
-// run();
-
-const height = area.rocks.reduce((acc, x) => (x.y > acc ? x.y : acc), 0);
-
-area.output();
-area.removeHeight();
-
-console.log('\nFinal height:', height, area.height, `with ${area.rocks.length} rocks`);

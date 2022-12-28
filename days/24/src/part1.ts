@@ -1,36 +1,7 @@
-import Queue, { DoneCallback, Job } from 'bee-queue';
-import { cpus } from 'os';
-import { isMainThread, Worker } from 'worker_threads';
 import { getMap, Location } from './input';
 
 const map = getMap();
-const queue = new Queue('day24', {
-  isWorker: !isMainThread
-});
-
-const clearJobs = async () => {
-  await queue.destroy();
-};
-
-const { end, start } = map;
-const jobProcess = async (job: Job<{ location: Location; time: number }>, done: DoneCallback<number>) => {
-  const { location, time } = job.data;
-  const { x, y } = location;
-
-  if (x === end.x && y === end.y) {
-    done(null, time);
-  }
-
-  const { candidates, blizzards } = map.getLocationCandidates(location, time + 1);
-
-  for (const candidate of candidates) {
-    if (!blizzards.find((x) => x.x === candidate.x && x.y === candidate.y)) {
-      await queue.createJob({ location: candidate, time: time + 1 }).save();
-    }
-  }
-
-  void job.remove();
-};
+let lastOutput: number | undefined;
 // let num = 0;
 // function bfs(start: Location, end: Location): { steps: number } {
 //   const visited: { loc: Location; minutes: number }[] = [];
@@ -68,102 +39,65 @@ const jobProcess = async (job: Job<{ location: Location; time: number }>, done: 
 
 //   return { steps: -1 };
 // }
-// function bfs(start: Location, end: Location, startTime = 0): number {
-//   let time = startTime;
-//   let currPos = [start];
-//   let nextPos = [];
 
-//   while (true) {
-//     while (currPos.length > 0) {
-//       const location = currPos.pop()!;
-//       const { x, y } = location;
+function bfs(start: Location, end: Location, startTime = 0): number {
+  let time = startTime;
+  let currPos = [start];
+  let nextPos = [];
 
-//       if (x === end.x && y === end.y) {
-//         return time;
-//       }
+  while (true) {
+    while (currPos.length > 0) {
+      const location = currPos.pop()!;
+      const { x, y } = location;
 
-//       const { candidates, blizzards } = map.getLocationCandidates(location, time + 1);
+      if (x === end.x && y === end.y) {
+        return time;
+      }
 
-//       for (const candidate of candidates) {
-//         if (!blizzards.find((x) => x.x === candidate.x && x.y === candidate.y)) {
-//           nextPos.push(candidate);
-//         }
-//       }
+      const { candidates, blizzards } = map.getLocationCandidates(location, time + 1);
 
-//       if (!lastOutput || Date.now() - lastOutput > 1000) {
-//         process.stdout.clearLine(-1);
-//         process.stdout.cursorTo(0);
-//         process.stdout.write(`Minutes: ${time} Queue: ${currPos.length}`);
+      for (const candidate of candidates) {
+        if (!blizzards.find((x) => x.x === candidate.x && x.y === candidate.y)) {
+          nextPos.push(candidate);
+        }
+      }
 
-//         lastOutput = Date.now();
-//       }
+      if (!lastOutput || Date.now() - lastOutput > 200) {
+        process.stdout.clearLine(-1);
+        process.stdout.cursorTo(0);
+        process.stdout.write(`Minutes: ${time} Queue: ${currPos.length}`);
 
-//       // for (const [x1, y1] of [
-//       //   [x + 1, y],
-//       //   [x - 1, y],
-//       //   [x, y + 1],
-//       //   [x, y - 1],
-//       //   [x, y]
-//       // ]) {
-//       //   if (
-//       //     (x1 >= 1 && x1 <= xMax && y1 >= 1 && y1 <= yMax && !blizzards.has(x1, y1)) ||
-//       //     (x1 === start.x && y1 === start.y) ||
-//       //     (x1 === end.x && y1 === end.y)
-//       //   ) {
-//       //     nextPos.push([x1, y1]);
-//       //   }
-//       // }
-//     }
+        lastOutput = Date.now();
+      }
 
-//     currPos = nextPos;
-//     nextPos = [];
-//     time += 1;
-//   }
-// }
-
-if (isMainThread) {
-  const workers: Worker[] = [];
-
-  void clearJobs().then(async () => {
-    await queue.createJob({ location: start, time: 0 }).save();
-  });
-
-  for (const _ of cpus()) {
-    workers.push(new Worker(__filename, { argv: process.argv }));
-  }
-
-  const interval = setInterval(async () => {
-    const stats = await queue.checkHealth();
-
-    process.stdout.clearLine(-1);
-    process.stdout.cursorTo(0);
-
-    process.stdout.write(`Queue has active: ${stats.active}, waiting: ${stats.waiting}, completed: ${stats.succeeded}`);
-  }, 1000);
-
-  queue.on('job succeeded', async (job, result) => {
-    if (result === undefined) return;
-
-    clearInterval(interval);
-    process.stdout.clearLine(-1);
-    process.stdout.cursorTo(0);
-
-    console.log('Job succeeded with result', result);
-
-    for (const worker of workers) {
-      await worker.terminate();
+      // for (const [x1, y1] of [
+      //   [x + 1, y],
+      //   [x - 1, y],
+      //   [x, y + 1],
+      //   [x, y - 1],
+      //   [x, y]
+      // ]) {
+      //   if (
+      //     (x1 >= 1 && x1 <= xMax && y1 >= 1 && y1 <= yMax && !blizzards.has(x1, y1)) ||
+      //     (x1 === start.x && y1 === start.y) ||
+      //     (x1 === end.x && y1 === end.y)
+      //   ) {
+      //     nextPos.push([x1, y1]);
+      //   }
+      // }
     }
 
-    await clearJobs();
-
-    process.exit();
-  });
-} else {
-  queue.process(100, jobProcess);
+    currPos = nextPos;
+    nextPos = [];
+    time += 1;
+  }
 }
 
-// console.log();
-// console.log('Found!');
+const steps = bfs(map.start, map.end);
+
+console.log();
+console.log('Found!');
+console.log('Steps:', steps);
 
 // for (let min = 0; min < path.length; min++) {
 //   const { grid, blizzards } = map.getLocationCandidates(path[min], min + 1);

@@ -2800,6 +2800,8 @@ const input = `16,8,5
 15,10,19
 12,14,5`;
 
+export const i = process.argv.find((x) => x === '--prod') ? input : guideInput;
+
 enum Face {
   Unknown = 'dunno',
   Cube = 'cube',
@@ -2905,21 +2907,99 @@ export class Droplet {
   }
 
   public getSurfaceAreaWithoutAirPockets() {
-    const faces = this.getSurfaceArea();
-    const airPockets = this.getAirPockets();
+    const exposedCubes = this.exposed();
 
-    for (const airPocket of airPockets) {
-      console.log(airPocket);
-      // faces -= airPocket.faces.length;
+    return this.cubes.flatMap((x) => this.getNeighbours(x)).filter((x) => exposedCubes.find((y) => x.x === y.x && x.y === y.y && x.z === y.z)).length;
+  }
+
+  public getBounds() {
+    return {
+      x: {
+        min: Math.min(...this.cubes.map((x) => x.x)),
+        max: Math.max(...this.cubes.map((x) => x.x))
+      },
+      y: {
+        min: Math.min(...this.cubes.map((x) => x.y)),
+        max: Math.max(...this.cubes.map((x) => x.y))
+      },
+      z: {
+        min: Math.min(...this.cubes.map((x) => x.z)),
+        max: Math.max(...this.cubes.map((x) => x.z))
+      }
+    };
+  }
+
+  public flood() {
+    const bounds = this.getBounds();
+    const flooded: Cube[] = [];
+
+    for (let x = bounds.x.min; x <= bounds.x.max; x++) {
+      for (let y = bounds.y.min; y <= bounds.y.max; y++) {
+        for (let z = bounds.z.min; z <= bounds.z.max; z++) {
+          if (this.cubes.find((i) => i.x === x && i.y === y && i.z === z) === undefined) {
+            flooded.push(new Cube(x, y, z));
+          }
+        }
+      }
     }
 
-    return faces;
+    return flooded;
+  }
+
+  public getNeighbours(cube: Cube): Cube[] {
+    return [
+      new Cube(cube.x + 1, cube.y, cube.z),
+      new Cube(cube.x - 1, cube.y, cube.z),
+      new Cube(cube.x, cube.y + 1, cube.z),
+      new Cube(cube.x, cube.y - 1, cube.z),
+      new Cube(cube.x, cube.y, cube.z + 1),
+      new Cube(cube.x, cube.y, cube.z - 1)
+    ];
+  }
+
+  public inBounds(cube: Cube) {
+    const bounds = this.getBounds();
+
+    return (
+      cube.x >= bounds.x.min - 1 &&
+      cube.x <= bounds.x.max + 1 &&
+      cube.y >= bounds.y.min - 1 &&
+      cube.y <= bounds.y.max + 1 &&
+      cube.z >= bounds.z.min - 1 &&
+      cube.z <= bounds.z.max + 1
+    );
+  }
+
+  public exposed() {
+    const exposedCubes: Cube[] = [];
+    const start = new Cube(0, 0, 0);
+    const queue = [start];
+    const seen = [start];
+
+    while (queue.length > 0) {
+      const cube = queue.shift()!;
+      const neighbours = this.getNeighbours(cube);
+
+      for (const neighbour of neighbours) {
+        if (this.cubes.find((x) => x.x === neighbour.x && x.y === neighbour.y && x.z === neighbour.z) || !this.inBounds(neighbour)) {
+          continue;
+        }
+
+        if (!seen.find((x) => x.x === neighbour.x && x.y === neighbour.y && x.z === neighbour.z)) {
+          queue.push(neighbour);
+          exposedCubes.push(neighbour);
+          seen.push(neighbour);
+        }
+      }
+    }
+
+    return exposedCubes;
   }
 }
 
 export const getDroplet = () => {
   const droplet = new Droplet();
-  const lines = input.split('\n');
+  const lines = i.split('\n');
 
   for (const line of lines) {
     const [x, y, z] = line.split(',').map((x) => parseInt(x, 10));

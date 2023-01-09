@@ -69,7 +69,8 @@ Valve RK has flow rate=9; tunnels lead to valves DF, JH, UE
 Valve OW has flow rate=0; tunnels lead to valves YL, GQ
 Valve XC has flow rate=0; tunnels lead to valves EY, EB`;
 
-const i = process.argv.find((x) => x === '--prod') ? input : guideInput;
+export const i = process.argv.find((x) => x === '--prod') ? input : guideInput;
+
 const valves: Valve[] = [];
 
 export class Valve {
@@ -77,6 +78,7 @@ export class Valve {
   public flow: number;
   public _tunnels: string[] = [];
   public state: 'open' | 'closed' = 'closed';
+  public paths: { [key: string]: number } = {};
 
   public constructor(name: string, flow: number, tunnels: string[]) {
     this.name = name;

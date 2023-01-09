@@ -41,7 +41,6 @@ export function getJetInput() {
 }
 
 const jets = getJetInput();
-let jetPosition = -1;
 
 export class Rock {
   // public jetPosition = -1;
@@ -149,12 +148,12 @@ export class Area {
   }
 
   public checkRockAcross(rock: Rock) {
-    jetPosition++;
-    if (jets[jetPosition] === undefined) {
-      jetPosition = 0;
+    this.jetPosition++;
+    if (jets[this.jetPosition] === undefined) {
+      this.jetPosition = 0;
     }
 
-    const movement = jets[jetPosition];
+    const movement = jets[this.jetPosition];
 
     for (let line = 0; line < rock.shape.length; line++) {
       for (let col = 0; col < rock.shape[line].length; col++) {

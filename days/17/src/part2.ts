@@ -4,9 +4,9 @@ const shapes = getRockShapes();
 const area = new Area(7, 4);
 let rockIndex = 0;
 let lastUpdate: { date: number; rocks: number } = { date: Date.now(), rocks: 0 };
-const rockAndDrift: { rock: Rock; drift: { x: number; y: number }; height: number }[] = [];
-let seen: { rock: Rock; drift: { x: number; y: number }; height: number }[] = [];
-const maxRocks = 2022;
+const rockAndDrift: { rock: Rock; drift: { x: number; y: number }; height: number; jet: number }[] = [];
+const seen: { rock: Rock; drift: { x: number; y: number }; height: number }[] = [];
+const maxRocks = 1000000000000;
 const compareRockShapes = (shape: Space[][], otherShape: Space[][]) => {
   if (shape.length !== otherShape.length) return false;
   if (shape[0].length !== otherShape[0].length) return false;
@@ -20,66 +20,95 @@ const compareRockShapes = (shape: Space[][], otherShape: Space[][]) => {
   return true;
 };
 
-let patternLength: number[] = [];
+const patternLength: number[] = [];
+
+// function findPatternOfRocks(rock: Rock, drift: { x: number; y: number }, height: number) {
+//   // we found a rock that drifted to the same spot as a previous rock
+//   const found = rockAndDrift
+//     .slice()
+//     .reverse()
+//     .find((x) => x.drift.x === drift.x && x.drift.y === drift.y && compareRockShapes(x.rock.shape, rock.shape));
+
+//   if (found) {
+//     // we've seen this rock, the 5 rocks didn't repeat
+//     if (seen.find((x) => compareRockShapes(x.rock.shape, rock.shape))) {
+//       seen = [];
+//     } else {
+//       // we haven't seen this rock
+//       seen.push(found);
+//     }
+//   } else {
+//     // if we haven't seen this pattern before, reset the seen list
+//     seen = [];
+//     rockAndDrift.push({ rock, drift, height });
+//   }
+
+//   // if we have seen all the rocks in the pattern, we have found the pattern
+//   if (seen.length === shapes.length) {
+//     // get the last rocks in the pattern
+//     const rocks = rockAndDrift.slice(-shapes.length);
+//     const newPatternLength = rocks[rocks.length - 1].height - rocks[0].height;
+//     // const newPatternLength = rocks[0].rock.y - rocks[rocks.length - 1].rock.y;
+//     const sloice = patternLength.slice(-shapes.length * rocks.reduce((a, b) => a + b.rock.affectedByJet, 0));
+
+//     if (sloice.length === shapes.length * rocks.reduce((a, b) => a + b.rock.affectedByJet, 0)) {
+//       if (sloice.some((x) => x !== newPatternLength)) {
+//         patternLength = [newPatternLength];
+//       } else {
+//         // console.log(rocks);
+
+//         const remainingRocks = maxRocks - area.rocks.length;
+//         const patternIt = Math.floor(remainingRocks / rocks.length);
+//         const extraRocks = rocks.slice(0, remainingRocks % rocks.length).reduce((a, b) => a + b.rock.height, 0);
+//         const finalHeight = area.height + newPatternLength * patternIt + extraRocks;
+
+//         console.log(
+//           'pattern of',
+//           rocks.length,
+//           'rocks, of height',
+//           newPatternLength,
+//           'at',
+//           patternIt,
+//           'times +',
+//           extraRocks,
+//           'height, final height:',
+//           finalHeight
+//         );
+
+//         return finalHeight;
+//       }
+//     }
+
+//     patternLength.push(newPatternLength);
+//   }
+
+//   return null;
+// }
+
+function divmod(dividend: number, divisor: number): [number, number] {
+  return [Math.floor(dividend / divisor), dividend % divisor];
+}
 
 function findPatternOfRocks(rock: Rock, drift: { x: number; y: number }, height: number) {
-  // we found a rock that drifted to the same spot as a previous rock
-  const found = rockAndDrift
-    .slice()
-    .reverse()
-    .find((x) => x.drift.x === drift.x && x.drift.y === drift.y && compareRockShapes(x.rock.shape, rock.shape));
+  const foundRockIdx = rockAndDrift.findIndex(
+    (x) => compareRockShapes(x.rock.shape, rock.shape) && x.drift.x === drift.x && x.drift.y === drift.y && x.jet === area.jetPosition
+  );
 
-  if (found) {
-    // if we haven't seen this rock before, add it to the seen list
-    if (!seen.find((x) => compareRockShapes(x.rock.shape, rock.shape))) {
-      seen.push(found);
+  if (foundRockIdx >= 0) {
+    // ok we got the same drift
+    const lastRock = rockAndDrift[foundRockIdx];
+    const rcycle = area.rocks.length - (foundRockIdx + 1);
+    const hcycle = height - lastRock.height;
+    const diff = maxRocks - area.rocks.length;
+    const [more, remain] = divmod(diff, rcycle);
+
+    if (remain === 0) {
+      console.log(area.rocks.length, diff, hcycle * more + height);
+      return hcycle * more + height;
     }
   } else {
-    // if we haven't seen this pattern before, reset the seen list
-    seen = [];
-    rockAndDrift.push({ rock, drift, height });
+    rockAndDrift.push({ rock, drift, height, jet: area.jetPosition });
   }
-
-  // if we have seen all the rocks in the pattern, we have found the pattern
-  if (seen.length === shapes.length) {
-    // get the last rocks in the pattern
-    const rocks = rockAndDrift.slice(-shapes.length);
-    const newPatternLength = rocks[rocks.length - 1].height - rocks[0].height;
-    // const newPatternLength = rocks[0].rock.y - rocks[rocks.length - 1].rock.y;
-    const sloice = patternLength.slice(-shapes.length * rocks.reduce((a, b) => a + b.rock.affectedByJet, 0));
-
-    if (sloice.length === shapes.length * rocks.reduce((a, b) => a + b.rock.affectedByJet, 0)) {
-      if (sloice.some((x) => x !== newPatternLength)) {
-        patternLength = [newPatternLength];
-      } else {
-        console.log(rocks);
-
-        const remainingRocks = maxRocks - area.rocks.length;
-        const patternIt = Math.floor(remainingRocks / rocks.length);
-        const extraRocks = rocks.slice(0, remainingRocks % rocks.length).reduce((a, b) => a + b.rock.height, 0);
-        const finalHeight = area.height + newPatternLength * patternIt + extraRocks;
-
-        console.log(
-          'pattern of',
-          rocks.length,
-          'rocks, of height',
-          newPatternLength,
-          'at',
-          patternIt,
-          'times +',
-          extraRocks,
-          'height, final height:',
-          finalHeight
-        );
-
-        return finalHeight;
-      }
-    }
-
-    patternLength.push(newPatternLength);
-  }
-
-  return null;
 }
 
 let tickSpeed = 0;
@@ -99,7 +128,7 @@ function run() {
     const lastRock = area.rocks[area.rocks.length - 1];
 
     if (lastRock) {
-      const drift = { x: lastRock.x - 3, y: lastRock.y - 0 };
+      const drift = { x: lastRock.x, y: lastRock.y };
       const { height } = area;
       const found = findPatternOfRocks(lastRock, drift, height);
 

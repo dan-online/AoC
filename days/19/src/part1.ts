@@ -2,10 +2,8 @@ import { getBlueprints } from './input';
 
 const blueprints = getBlueprints();
 
-// console.log(blueprints[0]);
+for (const blueprint of blueprints.slice(0, 1)) {
+  blueprint.openGeodes(24);
 
-// for (const blueprint of blueprints) {
-//   console.log(`${blueprint.id}: ${blueprint.openGeodes(24)}`);
-// }
-
-console.log(blueprints[0].recursivelyOpenGeodes(0, blueprints[0].robots, blueprints[0].resources, 0));
+  console.log(`\nBlueprint: ${blueprint.id} has quality ${blueprint.resources.geode * blueprint.id}`);
+}

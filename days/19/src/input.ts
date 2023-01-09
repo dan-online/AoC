@@ -32,6 +32,8 @@ Blueprint 28: Each ore robot costs 2 ore. Each clay robot costs 4 ore. Each obsi
 Blueprint 29: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 17 clay. Each geode robot costs 2 ore and 13 obsidian.
 Blueprint 30: Each ore robot costs 3 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 6 clay. Each geode robot costs 2 ore and 20 obsidian.`;
 
+const i = process.argv.find((x) => x === '--prod') ? input : guideInput;
+
 interface resources {
   ore: number;
   clay: number;
@@ -48,7 +50,7 @@ class Robot {
 }
 
 class Blueprint {
-  public id: string;
+  public id: number;
   public resources: resources = {
     ore: 0,
     clay: 0,
@@ -61,7 +63,7 @@ class Blueprint {
 
   public costs: { type: keyof resources; resources: resources }[] = [];
 
-  public constructor(id: string) {
+  public constructor(id: number) {
     this.id = id;
     this.addRobot('ore', true);
   }
@@ -183,12 +185,44 @@ class Blueprint {
     return { resources, robots };
   }
 
+  public hasRobots(type: keyof resources) {
+    const cost = this.costs.find((x) => x.type === type)!;
+    const resources = Object.keys(cost.resources).filter((x) => cost.resources[x as keyof resources] > 0);
+    const has = resources.every((t) => this.robots.find((robot) => robot.type === t));
+
+    return has;
+  }
+
+  public attemptBuyNextRobot(maxTime: number) {
+    const types = ['ore', 'clay', 'obsidian', 'geode'].reverse() as (keyof resources)[];
+
+    for (const type of types) {
+      const waitTime = this.costs.map((cost) => {
+        if (this.canAfford(cost.type, this.resources)) {
+          return 0;
+        } else if (!this.hasRobots(cost.type)) {
+          return maxTime + 1;
+        }
+
+        return 9;
+      });
+
+      console.log(type, waitTime);
+      if (this.recursiveProgress + waitTime + 1 >= maxTime) {
+        continue; // can't buy it
+      }
+
+      console.log('Wanna buy', type);
+    }
+  }
+
   public openGeodes(minutes: number) {
     const allMinutes = minutes;
 
     while (minutes > 0) {
       console.log(`== Minute ${allMinutes - minutes + 1} ==`);
 
+      this.attemptBuyNextRobot(minutes);
       this.collectAndReady();
 
       minutes--;
@@ -207,42 +241,40 @@ class Blueprint {
     process.stdout.write(`Recursive progress: ${this.recursiveProgress}/${total} (${((this.recursiveProgress / total) * 100).toFixed(2)}%)`);
   }
 
-  public recursivelyOpenGeodes(
-    minutes: number,
-    robots: Robot[],
-    resources: resources,
-    value: number,
-    depth = 0
-  ): { value: number; robots: Robot[]; resources: resources } {
-    minutes++;
-    depth++;
-    if (minutes > 24 || depth > 6) return { value: this.valueInOre(resources), robots, resources };
+  // public recursivelyOpenGeodes(
+  //   minutes: number,
+  //   robots: Robot[],
+  //   resources: resources,
+  //   value: number,
+  //   depth = 0
+  // ): { value: number; robots: Robot[]; resources: resources } {
+  //   while (minutes < 24) {
+  //     const { resources: newResources, robots: newRobots } = this.collectAndReady(robots, resources);
+  //     const newValue = this.valueInOre(newResources);
+  //     let winner = { value: newValue, robots: newRobots, resources: newResources };
 
-    const { resources: newResources, robots: newRobots } = this.collectAndReady(robots, resources);
-    const newValue = this.valueInOre(newResources);
-    let winner = { value: newValue, robots: newRobots, resources: newResources };
+  //     for (const type of ['ore', 'clay', 'obsidian', 'geode'] as (keyof resources)[]) {
+  //       if (this.canAfford(type, resources)) {
+  //         robots.push(new Robot(type));
 
-    for (const type of ['ore', 'clay', 'obsidian', 'geode'] as (keyof resources)[]) {
-      if (this.canAfford(type, resources)) {
-        robots.push(new Robot(type));
+  //         const current = this.recursivelyOpenGeodes(minutes, robots, resources, value, depth);
 
-        const current = this.recursivelyOpenGeodes(minutes, robots, resources, value, depth);
+  //         if (current.value > winner.value) {
+  //           winner = current;
+  //         }
+  //       }
+  //     }
 
-        if (current.value > winner.value) {
-          winner = current;
-        }
-      }
+  //     minutes++;
+  //   }
 
-      this.reportRecursiveProgress();
-    }
-
-    return this.recursivelyOpenGeodes(minutes, winner.robots, winner.resources, winner.value, depth);
-  }
+  //   return { value: this.valueInOre(resources), robots, resources };
+  // }
 }
 
 export function getBlueprints() {
-  const blueprints = guideInput.split('\n').map((x) => {
-    const blueprint = new Blueprint(x.split(':')[0].split('Blueprint ').join(''));
+  const blueprints = i.split('\n').map((x) => {
+    const blueprint = new Blueprint(parseInt(x.split(':')[0].split('Blueprint ').join(''), 10));
     const robots = x.split('Each ');
 
     robots.shift();

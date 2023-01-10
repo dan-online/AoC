@@ -1,6 +1,7 @@
 import { getBags } from './input';
 
 const bags = getBags();
+console.log(bags[0]);
 let sum = 0;
 
 for (const bag of bags) {

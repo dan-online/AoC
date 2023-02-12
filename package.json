@@ -37,6 +37,6 @@
   },
   "packageManager": "yarn@3.4.1",
   "dependencies": {
-    "tsup": "^6.5.0"
+    "tsup": "^6.6.2"
   }
 }
